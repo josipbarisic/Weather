@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="MainViewModel"
+            type="com.barisic.weather.viewmodels.MainViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/forecast_tv"
+            style="@style/StatusStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forecast"
+            android:visibility="@{MainViewModel.showingForecast ? View.VISIBLE: View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_forward_arrow"
+            android:visibility="@{MainViewModel.showingForecast ? View.VISIBLE: View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginVertical="10dp"
+            android:background="@color/colorLightWhite"
+            android:visibility="@{MainViewModel.showingForecast ? View.VISIBLE: View.GONE}"
+            app:layout_constraintTop_toBottomOf="@id/forecast_tv" />
+
+        <include
+            layout="@layout/placeholder_layout"
+            android:visibility="@{MainViewModel.showingForecast ? View.GONE: View.VISIBLE}"
+            app:MainViewModel="@{MainViewModel}" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/forecast_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{MainViewModel.showingForecast ? View.VISIBLE: View.GONE}"
+            app:layout_constraintTop_toBottomOf="@id/separator" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

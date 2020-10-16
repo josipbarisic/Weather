@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.barisic.weather.util.RequestParams" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="MainViewModel"
+            type="com.barisic.weather.viewmodels.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:paddingTop="30dp"
+        tools:context=".fragments.MainFragment">
+
+        <ProgressBar
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:visibility="@{MainViewModel.progressBarShowing &amp;&amp; !MainViewModel.placeHolderShowing ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{!MainViewModel.progressBarShowing &amp;&amp; MainViewModel.placeHolderShowing ? View.VISIBLE : View.GONE}">
+
+            <include
+                layout="@layout/placeholder_layout"
+                app:MainViewModel="@{MainViewModel}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{MainViewModel.progressBarShowing || MainViewModel.placeHolderShowing ? View.GONE : View.VISIBLE}">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/city_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                android:drawableStart="@drawable/ic_city"
+                android:drawablePadding="10dp"
+                android:onClick="@{()->MainViewModel.search()}"
+                android:padding="10dp"
+                android:text="@{MainViewModel.weatherHolder.name}"
+                android:textColor="@color/colorWhite"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/search_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/search_btn"
+                style="@style/ActionStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->MainViewModel.search()}"
+                android:src="@drawable/ic_search"
+                app:layout_constraintBottom_toBottomOf="@id/city_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/city_tv" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:scrollbarThumbVertical="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/city_tv">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/weather_icon"
+                        android:layout_width="120dp"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/ic_weather_logo"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/weather_status"
+                        style="@style/StatusStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{MainViewModel.weatherHolder.weatherData.main}"
+                        app:layout_constraintEnd_toEndOf="@id/weather_icon"
+                        app:layout_constraintStart_toStartOf="@id/weather_icon"
+                        app:layout_constraintTop_toBottomOf="@id/weather_icon" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/location_btn"
+                        style="@style/ActionStyle"
+                        android:layout_width="50dp"
+                        android:layout_height="60dp"
+                        android:onClick="@{()->MainViewModel.refresh()}"
+                        android:src="@drawable/ic_base_location"
+                        android:visibility="@{MainViewModel.showingLocationBtn ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintBottom_toBottomOf="@id/weather_icon"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/weather_icon" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/temperature_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{MainViewModel.weatherHolder.main.temperature}"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="120sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/weather_status" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/units_icon"
+                        android:layout_width="39dp"
+                        android:layout_height="39dp"
+                        android:layout_marginTop="36dp"
+                        android:src="@drawable/ic_celsius"
+                        app:layout_constraintStart_toEndOf="@id/temperature_tv"
+                        app:layout_constraintTop_toTopOf="@id/temperature_tv" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/weather_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{MainViewModel.weatherHolder.weatherData.description}"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="24sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/temperature_tv" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layouts_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="150dp"
+                        app:layout_constraintTop_toBottomOf="@id/weather_description">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/forecast_layout"
+                            style="@style/InfoWindowStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <include
+                                android:id="@+id/forecast_holder"
+                                layout="@layout/forecast_layout"
+                                app:MainViewModel="@{MainViewModel}" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/details_layout"
+                            style="@style/InfoWindowStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/forecast_layout">
+
+                            <include
+                                android:id="@+id/details_holder"
+                                layout="@layout/details_layout"
+                                app:MainViewModel="@{MainViewModel}" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/youtube_layout"
+                            style="@style/InfoWindowStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{()->MainViewModel.playVideo()}"
+                            android:visibility="@{MainViewModel.showingYouTubeVideo ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintTop_toBottomOf="@id/details_layout">
+
+                            <include
+                                android:id="@+id/youtube_holder"
+                                layout="@layout/recent_news_layout"
+                                app:MainViewModel="@{MainViewModel}" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </ScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
